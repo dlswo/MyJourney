@@ -7,11 +7,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.honeyrock.domain.CourseBoardVO;
+import org.honeyrock.domain.CourseVO;
 import org.honeyrock.domain.MemberVO;
 import org.honeyrock.domain.PointVO;
 import org.honeyrock.mapper.SearchMapper;
 import org.honeyrock.domain.PageParam;
 import org.honeyrock.security.domain.CustomMember;
+import org.honeyrock.service.CourseBoardService;
 import org.honeyrock.service.CourseService;
 import org.honeyrock.service.LoginService;
 import org.honeyrock.service.PointService;
@@ -56,10 +59,19 @@ public class SampleController {
 	@Setter(onMethod_ = @Autowired)
 	private PasswordEncoder pwEncoder;
 
+	@Setter(onMethod_ = @Autowired)
+	private CourseBoardService service;
+
 	
 	@GetMapping("/index")
-	public void index() {
-		
+	public void index(Model model, @ModelAttribute("pageObj") PageParam pageParam) {
+		model.addAttribute("list", service.getList(pageParam));
+		model.addAttribute("List", pointService.getList(pageParam));
+		model.addAttribute("CList", service.getCList(pageParam));
+		model.addAttribute("PList", pointService.getPList(pageParam));
+		model.addAttribute("RCList", service.getRCList(pageParam));
+		model.addAttribute("RPList", pointService.getRPList(pageParam));
+		pageParam.setTotal(pointService.getTotal(pageParam));
 	}
 	
 	@GetMapping("/search")
@@ -70,6 +82,25 @@ public class SampleController {
 	@GetMapping("/map")
 	public void map() {
 		
+	}
+	
+	@PostMapping("/map")
+	public String mapPost(CourseVO courseVo, CourseBoardVO courseBoardVO) {
+		
+		log.info("courseVO : " + courseVo);
+		log.info("courseBoardVO : " + courseBoardVO);
+		
+		String dbcourseKey = "";
+		List<CourseVO> courseList = courseService.getList(courseVo.getUsermail());
+		log.info("find : " + courseService.find(courseVo));
+		if(courseService.find(courseVo) == 1){
+			courseService.modify(courseVo);
+			service.modify(courseBoardVO);
+		}else {
+			courseService.register(courseVo);
+			service.register(courseBoardVO);
+		}
+		return "redirect:/mypage";
 	}
 	
 	@GetMapping("/simple")

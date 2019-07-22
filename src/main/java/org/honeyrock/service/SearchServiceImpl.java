@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.honeyrock.domain.ImageVO;
+import org.honeyrock.domain.MahoutVO;
 import org.honeyrock.domain.PointVO;
 import org.honeyrock.mapper.SearchMapper;
 import org.json.simple.JSONArray;
@@ -67,3 +68,4 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 }
+
